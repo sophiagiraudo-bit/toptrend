@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Top_trend — Minimal Fashion Curated</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    :root {
+      --cream: #faf9f7;
+      --warm: #f0ede8;
+      --dark: #1a1a1a;
+      --muted: #6b6259;
+      --accent: #8c7b6b;
+      --border: #e8e4df;
+    }
+    body { font-family: 'Georgia', serif; background: var(--cream); color: var(--dark); }
+
+    /* PAGE SYSTEM */
+    .page { display: none; }
+    .page.active { display: block; }
+
+    /* NAV */
+    nav {
+      padding: 28px 60px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      background: var(--cream);
+      z-index: 100;
+    }
+    .logo {
+      font-size: 18px;
+      letter-spacing: 8px;
+      text-transform: uppercase;
+      font-weight: 400;
+      cursor: pointer;
+    }
+    .nav-links { display: flex; gap: 40px; }
+    .nav-link {
+      font-size: 11px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #888;
+      text-decoration: none;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+    .nav-link:hover, .nav-link.active-link { color: var(--dark); }
+
+    /* HERO */
+    .hero {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      min-height: 92vh;
+    }
+    .hero-left {
+      background: var(--warm);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 80px;
+    }
+    .hero-tag {
+      font-size: 10px;
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 32px;
+    }
+    .hero-left h1 {
+      font-size: clamp(32px, 4vw, 58px);
+      font-weight: 300;
+      line-height: 1.2;
+      margin-bottom: 28px;
+    }
+    .hero-left h1 em { font-style: italic; color: var(--accent); }
+    .hero-left p {
+      font-size: 15px;
+      color: var(--muted);
+      line-height: 1.9;
+      max-width: 420px;
+      margin-bottom: 48px;
+    }
+    .btn {
+      display: inline-block;
+      padding: 15px 44px;
+      border: 1px solid var(--dark);
+      font-size: 10px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: var(--dark);
+      cursor: pointer;
+      transition: all 0.3s;
+      width: fit-content;
+    }
+    .btn:hover { background: var(--dark); color: var(--cream); }
+    .hero-right {
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-right img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top center;
+    }
+
+    /* MARQUEE */
+    .marquee-wrap {
+      background: var(--dark);
+      color: var(--cream);
+      padding: 18px 0;
+      overflow: hidden;
+    }
+    .marquee-track {
+      display: flex;
+      gap: 60px;
+      animation: marquee 18s linear infinite;
+      white-space: nowrap;
+    }
+    .marquee-track span {
+      font-size: 10px;
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      color: #888;
+      flex-shrink: 0;
+    }
+    .marquee-track span.dot { color: var(--accent); }
+    @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+    /* GRID */
+    .section-label {
+      font-size: 10px;
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+    .collection {
+      padding: 100px 60px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .collection-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 60px;
+    }
+    .collection-header h2 {
+      font-size: 42px;
+      font-weight: 300;
+    }
+    .collection-header p {
+      font-size: 13px;
+      color: var(--muted);
+      max-width: 280px;
+      text-align: right;
+      line-height: 1.8;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+    }
+    .grid-item {
+      position: relative;
+      overflow: hidden;
+      background: var(--warm);
+      aspect-ratio: 3/4;
+    }
+    .grid-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top center;
+      transition: transform 0.6s ease;
+    }
+    .grid-item:hover img { transform: scale(1.04); }
+    .grid-item-info {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 24px;
+      background: linear-gradient(transparent, rgba(0,0,0,0.5));
+      color: white;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .grid-item:hover .grid-item-info { opacity: 1; }
+    .grid-item-info span {
+      font-size: 10px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+    }
+
+    /* MANIFESTO */
+    .manifesto {
+      background: var(--dark);
+      color: var(--cream);
+      padding: 120px 60px;
+      text-align: center;
+    }
+    .manifesto h2 {
+      font-size: clamp(28px, 4vw, 52px);
+      font-weight: 300;
+      line-height: 1.4;
+      max-width: 800px;
+      margin: 0 auto 48px;
+    }
+    .manifesto h2 em { font-style: italic; color: #c8bfb5; }
+    .manifesto p {
+      font-size: 13px;
+      color: #888;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+
+    /* PILLARS */
+    .pillars {
+      padding: 100px 60px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .pillars-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 60px;
+      margin-top: 60px;
+    }
+    .pillar { border-top: 1px solid var(--border); padding-top: 32px; }
+    .pillar h3 {
+      font-size: 11px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+    .pillar p { font-size: 14px; color: var(--muted); line-height: 1.9; }
+
+    /* FOOTER */
+    footer {
+      padding: 40px 60px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      color: #aaa;
+      letter-spacing: 2px;
+    }
+    footer a {
+      color: #aaa;
+      text-decoration: none;
+      cursor: pointer;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      font-size: 10px;
+    }
+    footer a:hover { color: var(--dark); }
+
+    /* ── PRIVACY PAGE ── */
+    .privacy-page { padding: 80px 60px; max-width: 800px; margin: 0 auto; }
+    .privacy-page h1 {
+      font-size: 42px;
+      font-weight: 300;
+      margin-bottom: 12px;
+    }
+    .privacy-page .updated {
+      font-size: 12px;
+      color: var(--accent);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: 60px;
+    }
+    .privacy-page h3 {
+      font-size: 11px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      margin: 40px 0 14px;
+      color: var(--dark);
+    }
+    .privacy-page p, .privacy-page li {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.95;
+      margin-bottom: 8px;
+    }
+    .privacy-page ul { padding-left: 20px; }
+    .privacy-page .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 48px 0;
+    }
+
+    @media (max-width: 768px) {
+      nav { padding: 20px 24px; }
+      .hero { grid-template-columns: 1fr; }
+      .hero-right { height: 60vw; }
+      .hero-left { padding: 48px 24px; }
+      .collection { padding: 60px 24px; }
+      .collection-header { flex-direction: column; align-items: flex-start; gap: 16px; }
+      .collection-header p { text-align: left; }
+      .grid { grid-template-columns: repeat(2, 1fr); }
+      .pillars { padding: 60px 24px; }
+      .pillars-grid { grid-template-columns: 1fr; gap: 32px; }
+      .manifesto { padding: 80px 24px; }
+      footer { flex-direction: column; gap: 12px; text-align: center; }
+      .privacy-page { padding: 48px 24px; }
+      .nav-links { gap: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="logo" onclick="showPage('home')">Top_trend</div>
+    <div class="nav-links">
+      <span class="nav-link active-link" onclick="showPage('home')">Home</span>
+      <span class="nav-link" onclick="showPage('privacy')">Privacy Policy</span>
+    </div>
+  </nav>
+
+  <!-- ══════════════ HOME PAGE ══════════════ -->
+  <div class="page active" id="page-home">
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-left">
+        <p class="hero-tag">Minimal · Quiet Luxury · Clean Girl</p>
+        <h1>Style that speaks <em>quietly.</em> Pieces that last.</h1>
+        <p>Top_trend curates the best of minimal and quiet luxury fashion — handpicked pieces for women who dress with intention, not noise.</p>
+        <a class="btn" href="https://pinterest.com" target="_blank">Follow on Pinterest</a>
+      </div>
+      <div class="hero-right">
+        <img src="https://i.imgur.com/placeholder.jpg"
+             onerror="this.style.background='#e8e4df';this.style.display='block';this.src=''"
+             alt="Top_trend editorial"
+             id="hero-img"/>
+        <!-- REEMPLAZÁ el src con tu imagen subida -->
+      </div>
+    </section>
+
+    <!-- MARQUEE -->
+    <div class="marquee-wrap">
+      <div class="marquee-track">
+        <span>Minimal Fashion</span><span class="dot">·</span>
+        <span>Quiet Luxury</span><span class="dot">·</span>
+        <span>Clean Girl Aesthetic</span><span class="dot">·</span>
+        <span>Curated Daily</span><span class="dot">·</span>
+        <span>US Trending</span><span class="dot">·</span>
+        <span>Minimal Fashion</span><span class="dot">·</span>
+        <span>Quiet Luxury</span><span class="dot">·</span>
+        <span>Clean Girl Aesthetic</span><span class="dot">·</span>
+        <span>Curated Daily</span><span class="dot">·</span>
+        <span>US Trending</span><span class="dot">·</span>
+      </div>
+    </div>
+
+    <!-- COLLECTION GRID -->
+    <section class="collection">
+      <div class="collection-header">
+        <div>
+          <p class="section-label">Curated Picks</p>
+          <h2>This season's edit.</h2>
+        </div>
+        <p>Pieces selected for their quiet elegance — neutrals, structure, and timeless silhouettes.</p>
+      </div>
+      <div class="grid">
+        <div class="grid-item">
+          <!-- IMAGEN 1: Brown faux fur jacket -->
+          <img src="img1.jpg" alt="Brown Faux Fur Jacket"
+               onerror="this.parentElement.style.background='#d4cec8'"/>
+          <div class="grid-item-info"><span>Faux Fur Jacket</span></div>
+        </div>
+        <div class="grid-item">
+          <!-- IMAGEN 2: Beige faux fur jacket -->
+          <img src="img2.jpg" alt="Beige Faux Fur Jacket"
+               onerror="this.parentElement.style.background='#e8e2d8'"/>
+          <div class="grid-item-info"><span>Oversized Jacket</span></div>
+        </div>
+        <div class="grid-item">
+          <!-- IMAGEN 3: Cream belted jacket -->
+          <img src="img3.jpg" alt="Cream Belted Jacket"
+               onerror="this.parentElement.style.background='#ede9e2'"/>
+          <div class="grid-item-info"><span>Belted Jacket</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MANIFESTO -->
+    <section class="manifesto">
+      <h2>Fashion isn't about more — it's about <em>the right pieces,</em> worn with confidence.</h2>
+      <p>Top_trend · Curated for the US Market · Updated Daily</p>
+    </section>
+
+    <!-- PILLARS -->
+    <section class="pillars">
+      <p class="section-label">Our approach</p>
+      <div class="pillars-grid">
+        <div class="pillar">
+          <h3>Minimal</h3>
+          <p>Clean lines, neutral palettes, pieces that work effortlessly across every occasion without noise.</p>
+        </div>
+        <div class="pillar">
+          <h3>Intentional</h3>
+          <p>Every product passes through a strict aesthetic filter. Only what truly aligns with a quiet, elevated style makes the cut.</p>
+        </div>
+        <div class="pillar">
+          <h3>Accessible</h3>
+          <p>Quiet luxury doesn't require designer prices. We find the best pieces that look expensive without being out of reach.</p>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <span>TOP_TREND © 2025</span>
+      <a onclick="showPage('privacy')">Privacy Policy</a>
+    </footer>
+
+  </div><!-- end home -->
+
+
+  <!-- ══════════════ PRIVACY PAGE ══════════════ -->
+  <div class="page" id="page-privacy">
+
+    <div class="privacy-page">
+      <h1>Privacy Policy</h1>
+      <p class="updated">Last updated — June 2025</p>
+
+      <h3>1. Who We Are</h3>
+      <p>Top_trend ("we", "us", "our") is a fashion content platform that curates and publishes minimalist fashion content on Pinterest and other social media channels. We operate as a content creator and affiliate marketing business focused on the US market.</p>
+
+      <hr class="divider"/>
+
+      <h3>2. Information We Collect</h3>
+      <p>We do not collect personal information from visitors to this website. Our platform is purely informational. When you interact with our Pinterest content or purchase products through our affiliate links, data collection is governed by Pinterest's and the retailer's respective privacy policies.</p>
+
+      <hr class="divider"/>
+
+      <h3>3. Affiliate Links</h3>
+      <p>Some links shared through our Pinterest boards are affiliate links. This means we may earn a small commission if you purchase through these links — at no additional cost to you. We only share products that genuinely align with our aesthetic and quality standards.</p>
+
+      <hr class="divider"/>
+
+      <h3>4. Pinterest API Usage</h3>
+      <p>Top_trend uses the Pinterest API to publish content programmatically to our own Pinterest boards. Our API usage is strictly limited to managing our own account. We do not collect, store, or process any data belonging to other Pinterest users. Specifically, we use the API to:</p>
+      <ul>
+        <li>Publish pins to our own boards</li>
+        <li>Read our own board information</li>
+        <li>Manage our own content calendar and publishing schedule</li>
+      </ul>
+
+      <hr class="divider"/>
+
+      <h3>5. Cookies</h3>
+      <p>This website does not use cookies or any tracking technologies of any kind.</p>
+
+      <hr class="divider"/>
+
+      <h3>6. Third-Party Services</h3>
+      <p>Our content links to third-party platforms including Pinterest and SHEIN. We are not responsible for the privacy practices of these external platforms and encourage you to review their privacy policies directly.</p>
+
+      <hr class="divider"/>
+
+      <h3>7. Data Security</h3>
+      <p>We take reasonable precautions to ensure the integrity of our platform. No sensitive user data is collected or stored by Top_trend.</p>
+
+      <hr class="divider"/>
+
+      <h3>8. Changes to This Policy</h3>
+      <p>We may update this Privacy Policy periodically. Any changes will be published on this page with a revised date at the top.</p>
+
+      <hr class="divider"/>
+
+      <h3>9. Contact</h3>
+      <p>For any questions regarding this Privacy Policy, please reach out through our Pinterest profile.</p>
+
+    </div>
+
+    <footer>
+      <span>TOP_TREND © 2025</span>
+      <a onclick="showPage('home')">← Back to Home</a>
+    </footer>
+
+  </div><!-- end privacy -->
+
+  <script>
+    function showPage(name) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById('page-' + name).classList.add('active');
+      document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active-link'));
+      const links = { home: 0, privacy: 1 };
+      document.querySelectorAll('.nav-link')[links[name]]?.classList.add('active-link');
+      window.scrollTo(0, 0);
+    }
+  </script>
+
+</body>
+</html>
